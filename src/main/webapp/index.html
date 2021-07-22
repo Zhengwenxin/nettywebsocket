@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+	<head>
+		<meta charset="utf-8">
+		<script src="./vue.js" type="text/javascript" charset="utf-8"></script>
+		<title></title>
+	</head>
+	<body>
+		<div id="button" align="center">
+			<textarea id="responseText" style="height: 500px;width: 800px">
+            </textarea>
+            </br>
+            </br>
+            <button onclick="init()">
+                连接websocket
+            </button>
+		</div>
+		<script type="text/javascript">
+            function init() {
+                var socket;
+
+                if (!window.WebSocket) {
+
+                    window.WebSocket = window.MozWebSocket;
+                }
+
+                if (window.WebSocket) {
+                    socket = new WebSocket("ws://localhost:8081/websocket");
+
+                    socket.onmessage = function(event) {
+
+                        var ta = document.getElementById('responseText');
+                        ta.value += event.data + "\r\n";
+                    };
+
+                    socket.onopen = function(event) {
+
+                        var ta = document.getElementById('responseText');
+                        ta.value = ta.value+"\r\n"+"打开WebSoket 服务正常，浏览器支持WebSoket!" + "\r\n";
+
+                    };
+
+                    socket.onclose = function(event) {
+
+                        var ta = document.getElementById('responseText');
+                        ta.value = "";
+                        ta.value = ta.value+"\r\n"+"WebSocket 关闭" + "\r\n";
+                    };
+                } else {
+                    alert("您的浏览器不支持WebSocket协议！");
+                }
+
+                function send(message) {
+                    if (!window.WebSocket) {
+                        return;
+                    }
+                    if (socket.readyState == WebSocket.OPEN) {
+                        socket.send(message);
+                    } else {
+                        alert("WebSocket 连接没有建立成功！");
+                    }
+                }
+            }
+		</script>
+
+	</body>
+</html>
